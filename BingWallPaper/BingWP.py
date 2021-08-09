@@ -2,6 +2,7 @@
 # author: cgcel
 
 import datetime
+import logging
 
 import requests
 import win32api
@@ -9,10 +10,13 @@ import win32con
 import win32gui
 from bs4 import BeautifulSoup as bs
 
-save_path = "E:/picture/BingWP/"
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-base_url = "https://www.bing.com"
-main_url = "https://www.bing.com/?mkt=zh-CN"
+save_path = "D:/BingWP/"
+
+base_url = "https://cn.bing.com"
+main_url = "https://cn.bing.com/?mkt=zh-CN"
 
 
 def dateFormat(data):
@@ -31,10 +35,10 @@ class BingWP(object):
 
     def get_img_url(self):
         r = requests.get(main_url)
-        soup = bs(r.content, "html.parser")
-        result = soup.head.link['href']
+        soup = bs(r.content, "lxml")
+        result = soup.find("a", {"class":"downloadLink"})['href']
         self.url_img = base_url + result
-        # print(self.url_img)
+        logging.info(self.url_img)
 
     def save_img(self):
         r = requests.get(self.url_img)
